@@ -5,24 +5,36 @@ module Lita
     class OnewheelBaileys < Handler
       route /^taps$/i,
             :taps_list,
+            command: true,
             help: {'taps' => 'Dusplay the current taps at baileys.'}
 
       route /^taps (\d+)$/i,
             :taps_deets,
+            command: true,
             help: {'taps' => 'Dusplay the current taps at baileys.'}
 
       def taps_list(response)
         api = get_baileys
         reply = ''
         api['data'].each do |datum|
-          reply += "#{datum.first} #{datum[1]['beer'].strip}, " #{datum[1]['style'].strip},"
+          # tap num #{datum.first}
+          unless datum[1]['brewery'].nil?
+            reply += datum[1]['brewery'].strip + ' '
+          end
+          reply += datum[1]['beer'] + ', '
         end
-        reply = reply.sub /, $/, ''
+        reply = reply.strip.sub /,\s*$/, ''
+
         response.reply reply
       end
 
       def taps_deets(response)
         api = get_baileys
+        api['data'].each do |datum|
+          if datum[0] == response.matches[0][0]
+            response.reply "#{datum[1]['brewery'].strip} #{datum[1]['beer']} #{datum[1]['style'].strip}, #{datum[1]['fill'] * 100}% full.  Served in a #{datum[1]['glass']} glass."
+          end
+        end
       end
 
       def get_baileys
