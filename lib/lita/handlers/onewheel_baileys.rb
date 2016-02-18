@@ -6,12 +6,12 @@ module Lita
       route /^taps$/i,
             :taps_list,
             command: true,
-            help: {'taps' => 'Dusplay the current taps at baileys.'}
+            help: {'taps' => 'Display the current taps at baileys.'}
 
       route /^taps (\d+)$/i,
             :taps_deets,
             command: true,
-            help: {'taps' => 'Dusplay the current taps at baileys.'}
+            help: {'taps 4' => 'Display the tap 4 deets, including prices.'}
 
       def taps_list(response)
         api = get_baileys
