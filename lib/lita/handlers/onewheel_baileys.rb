@@ -17,7 +17,7 @@ module Lita
         api = get_baileys
         reply = ''
         api['data'].each do |datum|
-          # tap num #{datum.first}
+          reply += "#{datum.first}) "
           unless datum[1]['brewery'].nil?
             reply += datum[1]['brewery'].strip + ' '
           end
