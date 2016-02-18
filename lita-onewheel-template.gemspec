@@ -1,13 +1,13 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-onewheel-baileys'
-  spec.version       = '0.2.0'
+  spec.version       = '0.3.0'
   spec.authors       = ['Andrew Kreps']
   spec.email         = ['andrew.kreps@gmail.com']
   spec.description   = %q{Lita interface to Bailey's Taproom listings.}
   spec.summary       = %q{See above.}
   spec.homepage      = 'https://github.com/onewheelskyward/lita-onewheel-baileys'
   spec.license       = 'MIT'
-  spec.metadata      = { 'lita_plugin_type' => 'handler'}
+  spec.metadata      = { 'lita_plugin_type' => 'handler' }
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
