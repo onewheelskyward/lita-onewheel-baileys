@@ -32,7 +32,7 @@ module Lita
         api = get_baileys
         api['data'].each do |datum|
           if datum[0] == response.matches[0][0]
-             reply = "#{datum[1]['brewery'].strip} "
+             reply = "#{datum[1]['brewery'].to_s.strip} "
              reply += "#{datum[1]['beer']} "
              reply += "#{datum[1]['style'].strip}, "
              reply += "#{(datum[1]['fill'] * 100).round(2)}% full.  "

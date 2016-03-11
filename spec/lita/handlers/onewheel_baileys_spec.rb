@@ -16,6 +16,11 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
 
   it 'displays details for tap 4' do
     send_command 'taps 4'
-    expect(replies.last).to eq("Knee Deep Twisted Barre Dubbel, 73.65% full.  Served in a Nonic glass.  $5.00/$3.00")
+    expect(replies.last).to eq('Knee Deep Twisted Barre Dubbel, 73.65% full.  Served in a Nonic glass.  $5.00/$3.00')
+  end
+
+  it 'doesn\'t explode on 1' do
+    send_command 'taps 1'
+    expect(replies.last).to eq(' Tidebreak Apple Cider, 12.73% full.  Served in a Nonic glass.  $6.00/$3.00')
   end
 end
