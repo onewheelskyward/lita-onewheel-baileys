@@ -10,7 +10,7 @@ module Lita
             command: true,
             help: {'taps' => 'Display the current taps at baileys.'}
 
-      route /^taps (\d+)$/i,
+      route /^taps (\w+)$/i,
             :taps_deets,
             command: true,
             help: {'taps 4' => 'Display the tap 4 deets, including prices.'}
@@ -31,7 +31,7 @@ module Lita
       def taps_deets(response)
         beers = get_baileys
         beers.each do |tap, datum|
-          if tap == response.matches[0][0]
+          if tap == response.matches[0][0] or (response.matches[0][0] =~ /nitro/i and tap.match('Nitro'))
              reply = "#{datum[:brewery]} "
              reply += "#{datum[:beer]}"
              reply += "#{datum[:desc]}, "
