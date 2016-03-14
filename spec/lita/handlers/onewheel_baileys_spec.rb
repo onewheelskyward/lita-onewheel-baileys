@@ -16,21 +16,21 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
 
   it 'displays details for tap 4' do
     send_command 'taps 4'
-    expect(replies.last).to eq('Wild Ride Abbey Dubbel – Barrel Aged (Pinot Noir) 8.2%, 4oz Pour – $4 | 12oz – $7, 26% remaining')
+    expect(replies.last).to eq('4) Wild Ride Abbey Dubbel – Barrel Aged (Pinot Noir) 8.2%, 4oz Pour – $4 | 12oz – $7, 26% remaining')
   end
 
   it 'doesn\'t explode on 1' do
     send_command 'taps 1'
-    expect(replies.last).to eq('Cider Riot! Apple Cider w/ Irish tea 6.0%, 10oz – $4 | 20oz – $7 | 32oz Crowler $10, 48% remaining')
+    expect(replies.last).to eq('1) Cider Riot! Apple Cider w/ Irish tea 6.0%, 10oz – $4 | 20oz – $7 | 32oz Crowler $10, 48% remaining')
   end
 
   it 'gets nitro' do
     send_command 'taps nitro'
-    expect(replies.last).to eq('Backwoods Brown Ale 6.2%, 10oz – $3 | 20oz – $5, 98% remaining')
+    expect(replies.last).to eq('Nitro 6) Backwoods Brown Ale 6.2%, 10oz – $3 | 20oz – $5, 98% remaining')
   end
 
   it 'gets cask' do
     send_command 'taps cask'
-    expect(replies.last).to eq('Machine House ESB 4.0%, 10oz – $3 | 20oz – $5, 57% remaining')
+    expect(replies.last).to eq('Cask 3) Machine House ESB 4.0%, 10oz – $3 | 20oz – $5, 57% remaining')
   end
 end

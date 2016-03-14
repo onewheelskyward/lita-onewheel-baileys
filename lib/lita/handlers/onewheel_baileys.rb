@@ -33,7 +33,8 @@ module Lita
         beers.each do |tap, datum|
           query = response.matches[0][0]
           if tap == query or (query =~ /nitro/i and tap.match('Nitro')) or (query =~ /cask/i and tap.match('Cask'))
-             reply = "#{datum[:brewery]} "
+             reply = "#{tap}) "
+             reply += "#{datum[:brewery]} "
              reply += "#{datum[:beer]}"
              reply += "#{datum[:desc]}, "
              # reply += "Served in a #{datum[1]['glass']} glass.  "
