@@ -1,4 +1,6 @@
 require 'rest-client'
+require 'nokogiri'
+require 'sanitize'
 
 module Lita
   module Handlers
@@ -14,14 +16,12 @@ module Lita
             help: {'taps 4' => 'Display the tap 4 deets, including prices.'}
 
       def taps_list(response)
-        api = get_baileys
+        beers = get_baileys
         reply = ''
-        api['data'].each do |datum|
-          reply += "#{datum.first}) "
-          unless datum[1]['brewery'].nil?
-            reply += datum[1]['brewery'].strip + ' '
-          end
-          reply += datum[1]['beer'] + ', '
+        beers.each do |tap, datum|
+          reply += "#{tap}) "
+          reply += datum[:brewery] + ' '
+          reply += datum[:name] + ' '
         end
         reply = reply.strip.sub /,\s*$/, ''
 
@@ -29,22 +29,52 @@ module Lita
       end
 
       def taps_deets(response)
-        api = get_baileys
-        api['data'].each do |datum|
-          if datum[0] == response.matches[0][0]
-             reply = "#{datum[1]['brewery'].to_s.strip} "
-             reply += "#{datum[1]['beer']} "
-             reply += "#{datum[1]['style'].strip}, "
-             reply += "#{(datum[1]['fill'] * 100).round(2)}% full.  "
-             reply += "Served in a #{datum[1]['glass']} glass.  "
-             reply += "#{datum[1]['prices'][0]}/#{datum[1]['prices'][1]}"
+        beers = get_baileys
+        beers.each do |tap, datum|
+          if tap == response.matches[0][0]
+             reply = "#{datum[:brewery]} "
+             reply += "#{datum[:beer]}"
+             reply += "#{datum[:desc]} "
+             # reply += "Served in a #{datum[1]['glass']} glass.  "
+             reply += "#{datum[:prices]}, "
+             reply += "#{datum[:remaining]}"
              response.reply reply
           end
         end
       end
 
       def get_baileys
-        JSON.parse RestClient.get('http://visualizeapi.com/api/baileys')
+        response = RestClient.get('view-source:http://www.baileystaproom.com/draft-list/')
+        response.gsub! '<div id="responsecontainer"">', ''
+        parse_response response
+      end
+
+      def parse_response(response)
+        gimme_what_you_got = {}
+        noko = Nokogiri.HTML response
+        noko.css('div#boxfielddata').each do |m|
+          # gimme_what_you_got
+          tap_info = {}
+          tap = m.css('span').first.children.first.to_s.match(/[\w ]+\:/).to_s.sub /\:$/, ''
+          remaining = m.attributes['title']
+          brewery = m.css('span a').first.children.to_s.gsub(/\n/, '')
+          brewery.gsub! /RBBA/, ''
+          brewery.strip!
+          beer_name = m.css('span i').first.children.to_s
+          beer_desc_matchdata = m.to_s.gsub(/\n/, '').match(/(<br\s*\/*>)(.+%) /)
+          beer_desc = beer_desc_matchdata[2].gsub(/\s+/, ' ').strip
+          prices_str = m.css('div#prices').children.to_s.strip
+          prices = Sanitize.clean(prices_str).gsub(/We're Sorry/, '').gsub(/Inventory Restriction/, '').gsub(/Inventory Failure/, '').gsub('Success!', '').gsub(/\s+/, ' ').strip
+
+          gimme_what_you_got[tap] = {
+              remaining: remaining,
+              brewery: brewery,
+              name: beer_name,
+              desc: beer_desc,
+              prices: prices
+          }
+        end
+        gimme_what_you_got
       end
 
       Lita.register_handler(self)
