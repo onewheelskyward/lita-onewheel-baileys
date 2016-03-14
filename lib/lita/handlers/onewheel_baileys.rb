@@ -21,7 +21,7 @@ module Lita
         beers.each do |tap, datum|
           reply += "#{tap}) "
           reply += datum[:brewery] + ' '
-          reply += datum[:name] + ' '
+          reply += datum[:name] + '  '
         end
         reply = reply.strip.sub /,\s*$/, ''
 
@@ -31,7 +31,8 @@ module Lita
       def taps_deets(response)
         beers = get_baileys
         beers.each do |tap, datum|
-          if tap == response.matches[0][0] or (response.matches[0][0] =~ /nitro/i and tap.match('Nitro'))
+          query = response.matches[0][0]
+          if tap == query or (query =~ /nitro/i and tap.match('Nitro')) or (query =~ /cask/i and tap.match('Cask'))
              reply = "#{datum[:brewery]} "
              reply += "#{datum[:beer]}"
              reply += "#{datum[:desc]}, "
