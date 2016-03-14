@@ -44,7 +44,7 @@ module Lita
       end
 
       def get_baileys
-        response = RestClient.get('view-source:http://www.baileystaproom.com/draft-list/')
+        response = RestClient.get('http://www.baileystaproom.com/draft-list/')
         response.gsub! '<div id="responsecontainer"">', ''
         parse_response response
       end
