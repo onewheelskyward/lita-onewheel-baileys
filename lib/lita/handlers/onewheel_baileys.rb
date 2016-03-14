@@ -34,7 +34,7 @@ module Lita
           if tap == response.matches[0][0]
              reply = "#{datum[:brewery]} "
              reply += "#{datum[:beer]}"
-             reply += "#{datum[:desc]} "
+             reply += "#{datum[:desc]}, "
              # reply += "Served in a #{datum[1]['glass']} glass.  "
              reply += "#{datum[:prices]}, "
              reply += "#{datum[:remaining]}"
