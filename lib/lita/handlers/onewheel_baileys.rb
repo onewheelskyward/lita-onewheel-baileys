@@ -17,7 +17,7 @@ module Lita
 
       def taps_list(response)
         beers = get_baileys
-        reply = ''
+        reply = "Bailey's taps: "
         beers.each do |tap, datum|
           reply += "#{tap}) "
           reply += datum[:brewery] + ' '
@@ -33,7 +33,7 @@ module Lita
         beers.each do |tap, datum|
           query = response.matches[0][0]
           if tap == query or (query =~ /nitro/i and tap.match('Nitro')) or (query =~ /cask/i and tap.match('Cask'))
-             reply = "#{tap}) "
+             reply = "Bailey's tap #{tap}) "
              reply += "#{datum[:brewery]} "
              reply += "#{datum[:beer]}"
              reply += "#{datum[:desc]}, "
