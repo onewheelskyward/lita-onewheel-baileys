@@ -35,7 +35,7 @@ module Lita
           if tap == query or (query =~ /nitro/i and tap.match('Nitro')) or (query =~ /cask/i and tap.match('Cask'))
              reply = "Bailey's tap #{tap}) "
              reply += "#{datum[:brewery]} "
-             reply += "#{datum[:beer]}"
+             reply += "#{datum[:name]} - "
              reply += "#{datum[:desc]}, "
              # reply += "Served in a #{datum[1]['glass']} glass.  "
              reply += "#{datum[:prices]}, "
@@ -56,13 +56,12 @@ module Lita
         noko = Nokogiri.HTML response
         noko.css('div#boxfielddata').each do |m|
           # gimme_what_you_got
-          tap_info = {}
           tap = m.css('span').first.children.first.to_s.match(/[\w ]+\:/).to_s.sub /\:$/, ''
           remaining = m.attributes['title']
           brewery = m.css('span a').first.children.to_s.gsub(/\n/, '')
           brewery.gsub! /RBBA/, ''
           brewery.strip!
-          beer_name = m.css('span i').first.children.to_s
+          beer_name = m.css('span i').first.children.to_s.strip
           beer_desc_matchdata = m.to_s.gsub(/\n/, '').match(/(<br\s*\/*>)(.+%) /)
           beer_desc = beer_desc_matchdata[2].gsub(/\s+/, ' ').strip
           prices_str = m.css('div#prices').children.to_s.strip
