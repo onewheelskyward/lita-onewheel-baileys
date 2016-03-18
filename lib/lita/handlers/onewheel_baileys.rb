@@ -71,6 +71,7 @@ module Lita
           beer_desc = beer_desc_matchdata[2].gsub(/\s+/, ' ').strip
           prices_str = m.css('div#prices').children.to_s.strip
           prices = Sanitize.clean(prices_str).gsub(/We're Sorry/, '').gsub(/Inventory Restriction/, '').gsub(/Inventory Failure/, '').gsub('Success!', '').gsub(/\s+/, ' ').strip
+          full_text_search = "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.gsub /\d+\.*\d*%*/, ''}"
 
           gimme_what_you_got[tap] = {
               remaining: remaining,
@@ -78,7 +79,7 @@ module Lita
               name: beer_name,
               desc: beer_desc,
               prices: prices,
-              search: "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.sub /\d+/, ''}"
+              search: full_text_search
           }
         end
         gimme_what_you_got
