@@ -32,7 +32,7 @@ module Lita
         beers = get_baileys
         beers.each do |tap, datum|
           query = response.matches[0][0]
-          if tap == query or (query =~ /nitro/i and tap.match('Nitro')) or (query =~ /cask/i and tap.match('Cask'))
+          if tap == query or (datum[:search].match(/#{query}/i))
              reply = "Bailey's tap #{tap}) "
              reply += "#{datum[:brewery]} "
              reply += "#{datum[:name]} - "
@@ -72,7 +72,8 @@ module Lita
               brewery: brewery,
               name: beer_name,
               desc: beer_desc,
-              prices: prices
+              prices: prices,
+              search: "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.sub /\d+/, ''}"
           }
         end
         gimme_what_you_got

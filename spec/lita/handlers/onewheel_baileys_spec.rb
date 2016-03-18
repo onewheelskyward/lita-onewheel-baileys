@@ -33,4 +33,14 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
     send_command 'taps cask'
     expect(replies.last).to eq('Bailey\'s tap Cask 3) Machine House Crystal Maze - ESB 4.0%, 10oz – $3 | 20oz – $5, 57% remaining')
   end
+
+  it 'searches for ipa' do
+    send_command 'taps ipa'
+    expect(replies.last).to eq("Bailey's tap 24) Oakshire Perfect Storm - Imperial IPA 9.0%, 10oz – $4 | 20oz – $6 | 32oz Crowler $10, 61% remaining")
+  end
+
+  it 'searches for brown' do
+    send_command 'taps brown'
+    expect(replies.last).to eq("Bailey's tap 22) GoodLife 29er - India Brown Ale 6.0%, 10oz – $3 | 20oz – $5 | 32oz Crowler $8, 37% remaining")
+  end
 end
