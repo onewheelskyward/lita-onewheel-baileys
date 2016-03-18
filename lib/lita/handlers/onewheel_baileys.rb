@@ -31,8 +31,9 @@ module Lita
       def taps_deets(response)
         beers = get_baileys
         beers.each do |tap, datum|
-          query = response.matches[0][0]
-          if tap == query or (datum[:search].match(/#{query}/i))
+          query = response.matches[0][0].strip
+          # Search directly by tap number OR full text match.
+          if (query.match(/^\d+$/) and tap == query) or (datum[:search].match(/#{query}/i))
              reply = "Bailey's tap #{tap}) "
              reply += "#{datum[:brewery]} "
              reply += "#{datum[:name]} - "

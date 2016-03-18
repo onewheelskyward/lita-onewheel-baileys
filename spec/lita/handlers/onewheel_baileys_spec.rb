@@ -21,6 +21,7 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
 
   it 'doesn\'t explode on 1' do
     send_command 'taps 1'
+    expect(replies.count).to eq(1)
     expect(replies.last).to eq('Bailey\'s tap 1) Cider Riot! Plastic Paddy - Apple Cider w/ Irish tea 6.0%, 10oz – $4 | 20oz – $7 | 32oz Crowler $10, 48% remaining')
   end
 
