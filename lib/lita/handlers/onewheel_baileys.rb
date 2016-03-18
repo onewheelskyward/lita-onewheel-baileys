@@ -25,6 +25,7 @@ module Lita
         end
         reply = reply.strip.sub /,\s*$/, ''
 
+        Lita.logger.info "Replying with #{reply}"
         response.reply reply
       end
 
@@ -34,6 +35,8 @@ module Lita
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
           if (query.match(/^\d+$/) and tap == query) or (datum[:search].match(/#{query}/i))
+             Lita.logger.info "Adding tap #{tap} to the list.  #{query.match(/^\d+$/) and tap == query} or #{datum[:search].match(/#{query}/i)}"
+             Lita.logger.info "search field #{datum[:search]}"
              reply = "Bailey's tap #{tap}) "
              reply += "#{datum[:brewery]} "
              reply += "#{datum[:name]} - "
@@ -41,6 +44,7 @@ module Lita
              # reply += "Served in a #{datum[1]['glass']} glass.  "
              reply += "#{datum[:prices]}, "
              reply += "#{datum[:remaining]}"
+             Lita.logger.info "Replying with #{reply}"
              response.reply reply
           end
         end
