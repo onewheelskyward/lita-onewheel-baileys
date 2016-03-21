@@ -35,7 +35,7 @@ module Lita
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
           Lita.logger.info "Adding tap #{tap} to the list.  #{query.match(/^\d+$/) and tap == query} or #{datum[:search].match(/#{query}/i)}"
-          if tap == query or (query =~ /nitro/i and tap.match('Nitro')) or (query =~ /cask/i and tap.match('Cask'))
+          if (query.match(/^\d+$/) and tap == query) or (datum[:search].match(/#{query}/i))
             send_response(tap, datum, response)
           end
           if (abv_matches = query.match(/([><]\d+\.*\d*)/))
@@ -72,7 +72,7 @@ module Lita
           # gimme_what_you_got
           tap_info = {}
           # Lita.logger.info "span first: #{m.css('span').first}"
-          tap = m.css('span').first.children.first.to_s.match(/[\w ]+\:/).to_s.sub /\:$/, ''
+          tap = get_tap_name(m)
           remaining = m.attributes['title']
           # Lita.logger.info "brewery first: #{m.css('span a').first}"
           if m.css('span a').first
@@ -104,6 +104,10 @@ module Lita
           }
         end
         gimme_what_you_got
+      end
+
+      def get_tap_name(m)
+        m.css('span').first.children.first.to_s.match(/[\w ]+\:/).to_s.sub /\:$/, ''
       end
 
       Lita.register_handler(self)
