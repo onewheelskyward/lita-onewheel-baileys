@@ -98,9 +98,17 @@ module Lita
         reply += "#{datum[:name]} "
         reply += "- #{datum[:desc]}, "
         # reply += "Served in a #{datum[1]['glass']} glass.  "
-        reply += "#{datum[:prices]}, "
+        reply += "#{get_display_prices datum[:prices]}, "
         reply += "#{datum[:remaining]}"
         response.reply reply
+      end
+
+      def get_display_prices(prices)
+        price_array = []
+        prices.each do |p|
+          price_array.push "#{p[:size]} - #{p[:cost]}"
+        end
+        price_array.join ' | '
       end
 
       def get_baileys
@@ -167,13 +175,24 @@ module Lita
       # There are a bunch of hidden html fields that get stripped after sanitize.
       def get_prices(noko)
         prices_str = noko.css('div#prices').children.to_s.strip
-        Sanitize.clean(prices_str)
+        prices = Sanitize.clean(prices_str)
             .gsub(/We're Sorry/, '')
             .gsub(/Inventory Restriction/, '')
             .gsub(/Inventory Failure/, '')
             .gsub('Success!', '')
             .gsub(/\s+/, ' ')
             .strip
+        price_points = prices.split(/\s\|\s/)
+        prices_array = []
+        price_points.each do |price|
+          size = price.match /\d+(oz|cl)/
+          dollars = price.match /\$\d+\.*\d*/
+          crowler = price.match ' Crowler'
+          size = size.to_s + crowler.to_s
+          p = {size: size, cost: dollars}
+          prices_array.push p
+        end
+        prices_array
       end
 
       # Returns 1, 2, Cask 3, Nitro 4...
