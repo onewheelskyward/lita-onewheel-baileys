@@ -10,10 +10,15 @@ module Lita
             command: true,
             help: {'taps' => 'Display the current taps at baileys.'}
 
-      route /^taps ([<>\w.]+)$/i,
+      route /^taps ([\w]+)$/i,
             :taps_deets,
             command: true,
             help: {'taps 4' => 'Display the tap 4 deets, including prices.'}
+
+      route /^taps ([<>\w.]+)%$/i,
+            :taps_by_abv,
+            command: true,
+            help: {'taps >4%' => 'Display beers over 4% ABV.'}
 
       def taps_list(response)
         beers = get_baileys
@@ -34,14 +39,24 @@ module Lita
         beers.each do |tap, datum|
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
-          Lita.logger.info "Adding tap #{tap} to the list.  #{query.match(/^\d+$/) and tap == query} or #{datum[:search].match(/#{query}/i)}"
           if (query.match(/^\d+$/) and tap == query) or (datum[:search].match(/#{query}/i))
             send_response(tap, datum, response)
           end
-          if (abv_matches = query.match(/([><]\d+\.*\d*)/))
-            Lita.logger.info "abv_matches #{abv_matches[0]}"
-            Lita.logger.info "#{datum[:abv].to_f} >= #{abv_matches[0].to_f} == #{datum[:abv].to_f >= abv_matches[0].to_f}"
-            if abv_matches[0] =~ />/ and datum[:abv].to_f >= abv_matches[0].to_f
+        end
+      end
+
+      def taps_by_abv(response)
+        beers = get_baileys
+        beers.each do |tap, datum|
+          query = response.matches[0][0].strip
+          # Search directly by tap number OR full text match.
+          if (abv_matches = query.match(/([><])(\d+\.*\d*)/))
+            direction = abv_matches.to_s.match(/[<>]/).to_s
+            abv_requested = abv_matches.to_s.match(/\d+.*\d*/).to_s
+            if direction == '>' and datum[:abv].to_f >= abv_requested.to_f
+              send_response(tap, datum, response)
+            end
+            if direction == '<' and datum[:abv].to_f <= abv_requested.to_f
               send_response(tap, datum, response)
             end
           end
@@ -86,12 +101,11 @@ module Lita
             if (abv_matches = beer_desc.match(/\d+\.\d+%/))
               # Lita.logger.info "#{abv_matches.inspect}"
               abv = abv_matches.to_s.sub '%', ''
-              Lita.logger.info "ABV: #{abv}"
             end
           end
           prices_str = m.css('div#prices').children.to_s.strip
           prices = Sanitize.clean(prices_str).gsub(/We're Sorry/, '').gsub(/Inventory Restriction/, '').gsub(/Inventory Failure/, '').gsub('Success!', '').gsub(/\s+/, ' ').strip
-          full_text_search = "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.gsub /\d+\.*\d*%*/, ''}"
+          full_text_search = "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.to_s.gsub /\d+\.*\d*%*/, ''}"
 
           gimme_what_you_got[tap] = {
               remaining: remaining,
