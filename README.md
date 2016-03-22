@@ -1,22 +1,28 @@
-# lita-automatic-pancake
+# lita-onewheel-baileys
 
-[![Build Status](https://travis-ci.org/onewheelskyward/lita-automatic-pancake.png?branch=master)](https://travis-ci.org/onewheelskyward/lita-automatic-pancake)
-[![Coverage Status](https://coveralls.io/repos/onewheelskyward/lita-automatic-pancake/badge.png)](https://coveralls.io/r/onewheelskyward/lita-automatic-pancake)
+[![Build Status](https://travis-ci.org/onewheelskyward/lita-onewheel-baileys.png?branch=master)](https://travis-ci.org/onewheelskyward/lita-onewheel-baileys)
+[![Coverage Status](https://coveralls.io/repos/onewheelskyward/lita-onewheel-baileys/badge.png)](https://coveralls.io/r/onewheelskyward/lita-onewheel-baileys)
 
-TODO: Add a description of the plugin.
+Searches Bailey's Taproom draft list for data and displays it in IRC.
+
+http://www.baileystaproom.com/draft-list/
 
 ## Installation
 
-Add lita-automatic-pancake to your Lita instance's Gemfile:
+Add lita-onewheel-baileys to your Lita instance's Gemfile:
 
 ``` ruby
-gem "lita-onewheel-"
+gem 'lita-onewheel-baileys'
 ```
-
-## Configuration
-
-TODO: Describe any configuration attributes the plugin exposes.
 
 ## Usage
 
-TODO: Describe the plugin's features and how to use them.
+taps
+
+taps 4
+
+taps nitro
+
+taps >5%
+
+taps <$5
