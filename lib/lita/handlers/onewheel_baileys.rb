@@ -48,6 +48,9 @@ module Lita
       def taps_by_abv(response)
         beers = get_baileys
         beers.each do |tap, datum|
+          if datum[:abv].to_f == 0.0
+            next
+          end
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
           if (abv_matches = query.match(/([><])(\d+\.*\d*)/))
