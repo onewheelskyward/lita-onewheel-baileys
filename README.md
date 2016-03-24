@@ -26,3 +26,5 @@ taps nitro
 taps >5%
 
 taps <$5
+
+taps roulette|random

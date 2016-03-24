@@ -25,6 +25,11 @@ module Lita
             command: true,
             help: {'taps <$5' => 'Display beers under $5.'}
 
+      route /^taps (roulette|random)$/i,
+            :taps_by_random,
+            command: true,
+            help: {'taps roulette' => 'Can\'t decide?  Let me do it for you!'}
+
       def taps_list(response)
         beers = get_baileys
         reply = "Bailey's taps: "
@@ -91,6 +96,12 @@ module Lita
             end
           end
         end
+      end
+
+      def taps_by_random(response)
+        beers = get_baileys
+        beer = beers.to_a.sample
+        send_response(beer[0], beer[1], response)
       end
 
       def send_response(tap, datum, response)

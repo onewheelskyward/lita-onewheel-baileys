@@ -78,4 +78,16 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
     expect(replies[1]).to eq("Bailey's tap 18) Knee Deep Hop Surplus - Triple IPA 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 25% remaining")
     expect(replies[2]).to eq("Bailey's tap 20) Knee Deep Dark Horse - Imperial Stout 12.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 39% remaining")
   end
+
+  it 'runs a random beer through' do
+    send_command 'taps roulette'
+    expect(replies.count).to eq(1)
+    expect(replies.last).to include("Bailey's tap")
+  end
+
+  it 'runs a random beer through' do
+    send_command 'taps random'
+    expect(replies.count).to eq(1)
+    expect(replies.last).to include("Bailey's tap")
+  end
 end
