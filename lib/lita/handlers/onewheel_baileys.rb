@@ -74,18 +74,19 @@ module Lita
       def taps_by_price(response)
         beers = get_baileys
         beers.each do |tap, datum|
-          if datum[:abv].to_f == 0.0
-            next
-          end
+          # if datum[:prices][1][:cost].to_f == 0.0
+          #   next
+          # end
+
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
-          if (abv_matches = query.match(/([><])(\d+\.*\d*)/))
-            direction = abv_matches.to_s.match(/[<>]/).to_s
-            abv_requested = abv_matches.to_s.match(/\d+.*\d*/).to_s
-            if direction == '>' and datum[:abv].to_f >= abv_requested.to_f
+          if (price_matches = query.match(/([><])\$(\d+\.*\d*)/))
+            direction = price_matches.to_s.match(/[<>]/).to_s
+            price_requested = price_matches.to_s.match(/\d+.*\d*/).to_s
+            if direction == '>' and datum[:prices][1][:cost].to_f >= price_requested.to_f
               send_response(tap, datum, response)
             end
-            if direction == '<' and datum[:abv].to_f <= abv_requested.to_f
+            if direction == '<' and datum[:prices][1][:cost].to_f <= price_requested.to_f
               send_response(tap, datum, response)
             end
           end
@@ -106,7 +107,7 @@ module Lita
       def get_display_prices(prices)
         price_array = []
         prices.each do |p|
-          price_array.push "#{p[:size]} - #{p[:cost]}"
+          price_array.push "#{p[:size]} - $#{p[:cost]}"
         end
         price_array.join ' | '
       end
@@ -186,7 +187,7 @@ module Lita
         prices_array = []
         price_points.each do |price|
           size = price.match /\d+(oz|cl)/
-          dollars = price.match /\$\d+\.*\d*/
+          dollars = price.match(/\$\d+\.*\d*/).to_s.sub('$', '')
           crowler = price.match ' Crowler'
           size = size.to_s + crowler.to_s
           p = {size: size, cost: dollars}
