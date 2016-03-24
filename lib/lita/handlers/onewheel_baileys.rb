@@ -113,7 +113,11 @@ module Lita
       end
 
       def get_baileys
-        response = RestClient.get('http://www.baileystaproom.com/draft-list/')
+        unless (response = redis.get('page_response'))
+          Lita.logger.info 'No cached result found.'
+          response = RestClient.get('http://www.baileystaproom.com/draft-list/')
+          redis.setex('page_response', 1800, response)
+        end
         response.gsub! '<div id="responsecontainer"">', ''
         parse_response response
       end
