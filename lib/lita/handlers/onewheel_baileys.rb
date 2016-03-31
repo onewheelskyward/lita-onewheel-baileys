@@ -31,10 +31,11 @@ module Lita
             help: {'taps roulette' => 'Can\'t decide?  Let me do it for you!'}
 
       def taps_list(response)
-        beers = get_baileys
+        beers = get_source
         reply = "Bailey's taps: "
         beers.each do |tap, datum|
           reply += "#{tap}) "
+          reply += get_tap_type_text(datum[:type])
           reply += datum[:brewery] + ' '
           reply += datum[:name] + '  '
         end
@@ -45,24 +46,25 @@ module Lita
       end
 
       def taps_deets(response)
-        beers = get_baileys
+        beers = get_source
         beers.each do |tap, datum|
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
-          if (query.match(/^\d+$/) and tap == query) or (datum[:search].match(/#{query}/i))
+          # Let's make cask and nitro taps specific.
+          if (query.match(/^\d+$/) and tap == query) or (datum[:search].match(/#{query}/i)) or (datum[:type].downcase.match(/#{query}/i))  # Cask and Nitro
             send_response(tap, datum, response)
           end
         end
       end
 
       def taps_by_abv(response)
-        beers = get_baileys
+        beers = get_source
         beers.each do |tap, datum|
           if datum[:abv].to_f == 0.0
             next
           end
           query = response.matches[0][0].strip
-          # Search directly by tap number OR full text match.
+          # Search directly by abv matcher.
           if (abv_matches = query.match(/([><])(\d+\.*\d*)/))
             direction = abv_matches.to_s.match(/[<>]/).to_s
             abv_requested = abv_matches.to_s.match(/\d+.*\d*/).to_s
@@ -77,7 +79,7 @@ module Lita
       end
 
       def taps_by_price(response)
-        beers = get_baileys
+        beers = get_source
         beers.each do |tap, datum|
           # if datum[:prices][1][:cost].to_f == 0.0
           #   next
@@ -99,13 +101,13 @@ module Lita
       end
 
       def taps_by_random(response)
-        beers = get_baileys
+        beers = get_source
         beer = beers.to_a.sample
         send_response(beer[0], beer[1], response)
       end
 
       def send_response(tap, datum, response)
-        reply = "Bailey's tap #{tap}) "
+        reply = "Bailey's tap #{tap}) #{get_tap_type_text(datum[:type])}"
         reply += "#{datum[:brewery]} "
         reply += "#{datum[:name]} "
         reply += "- #{datum[:desc]}, "
@@ -113,6 +115,10 @@ module Lita
         reply += "#{get_display_prices datum[:prices]}, "
         reply += "#{datum[:remaining]}"
         response.reply reply
+      end
+
+      def get_tap_type_text(type)
+        (type.empty?) ? '' : "(#{type}) "
       end
 
       def get_display_prices(prices)
@@ -123,7 +129,7 @@ module Lita
         price_array.join ' | '
       end
 
-      def get_baileys
+      def get_source
         unless (response = redis.get('page_response'))
           Lita.logger.info 'No cached result found.'
           response = RestClient.get('http://www.baileystaproom.com/draft-list/')
@@ -133,12 +139,18 @@ module Lita
         parse_response response
       end
 
+      # This is the worker bee- decoding the html into our "standard" document.
+      # Future implementations could simply override this implementation-specific
+      # code to help this grow more widely.
       def parse_response(response)
         gimme_what_you_got = {}
         noko = Nokogiri.HTML response
         noko.css('div#boxfielddata').each do |beer_node|
           # gimme_what_you_got
-          tap = get_tap_name(beer_node)
+          tap_name = get_tap_name(beer_node)
+          tap = tap_name.match(/\d+/).to_s
+          tap_type = tap_name.match(/(cask|nitro)/i).to_s
+
           remaining = beer_node.attributes['title']
 
           brewery = get_brewery(beer_node)
@@ -149,6 +161,7 @@ module Lita
           prices = get_prices(beer_node)
 
           gimme_what_you_got[tap] = {
+              type: tap_type,
               remaining: remaining,
               brewery: brewery.to_s,
               name: beer_name.to_s,
