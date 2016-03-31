@@ -15,12 +15,12 @@ module Lita
             command: true,
             help: {'taps 4' => 'Display the tap 4 deets, including prices.'}
 
-      route /^taps ([<>\w.\s]+)%$/i,
+      route /^taps ([<>=\w.\s]+)%$/i,
             :taps_by_abv,
             command: true,
             help: {'taps >4%' => 'Display beers over 4% ABV.'}
 
-      route /^taps ([<>\$\w.\s]+)$/i,
+      route /^taps ([<>=\$\w.\s]+)$/i,
             :taps_by_price,
             command: true,
             help: {'taps <$5' => 'Display beers under $5.'}
@@ -65,13 +65,19 @@ module Lita
           end
           query = response.matches[0][0].strip
           # Search directly by abv matcher.
-          if (abv_matches = query.match(/([><])\s*(\d+\.*\d*)/))
-            direction = abv_matches.to_s.match(/[<>]/).to_s
+          if (abv_matches = query.match(/([><=]+)\s*(\d+\.*\d*)/))
+            direction = abv_matches.to_s.match(/[<>=]+/).to_s
             abv_requested = abv_matches.to_s.match(/\d+.*\d*/).to_s
-            if direction == '>' and datum[:abv].to_f >= abv_requested.to_f
+            if direction == '>' and datum[:abv].to_f > abv_requested.to_f
               send_response(tap, datum, response)
             end
-            if direction == '<' and datum[:abv].to_f <= abv_requested.to_f
+            if direction == '<' and datum[:abv].to_f < abv_requested.to_f
+              send_response(tap, datum, response)
+            end
+            if direction == '>=' and datum[:abv].to_f >= abv_requested.to_f
+              send_response(tap, datum, response)
+            end
+            if direction == '<=' and datum[:abv].to_f <= abv_requested.to_f
               send_response(tap, datum, response)
             end
           end
@@ -87,13 +93,19 @@ module Lita
 
           query = response.matches[0][0].strip
           # Search directly by tap number OR full text match.
-          if (price_matches = query.match(/([><])\s*\$(\d+\.*\d*)/))
-            direction = price_matches.to_s.match(/[<>]/).to_s
+          if (price_matches = query.match(/([><=]+)\s*\$(\d+\.*\d*)/))
+            direction = price_matches.to_s.match(/[<>=]+/).to_s
             price_requested = price_matches.to_s.match(/\d+.*\d*/).to_s
-            if direction == '>' and datum[:prices][1][:cost].to_f >= price_requested.to_f
+            if direction == '>' and datum[:prices][1][:cost].to_f > price_requested.to_f
               send_response(tap, datum, response)
             end
-            if direction == '<' and datum[:prices][1][:cost].to_f <= price_requested.to_f
+            if direction == '<' and datum[:prices][1][:cost].to_f < price_requested.to_f
+              send_response(tap, datum, response)
+            end
+            if direction == '>=' and datum[:prices][1][:cost].to_f >= price_requested.to_f
+              send_response(tap, datum, response)
+            end
+            if direction == '<=' and datum[:prices][1][:cost].to_f <= price_requested.to_f
               send_response(tap, datum, response)
             end
           end
