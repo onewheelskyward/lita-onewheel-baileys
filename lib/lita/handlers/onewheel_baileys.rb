@@ -10,7 +10,7 @@ module Lita
             command: true,
             help: {'taps' => 'Display the current taps at baileys.'}
 
-      route /^taps ([\w]+)$/i,
+      route /^taps ([\w ]+)$/i,
             :taps_deets,
             command: true,
             help: {'taps 4' => 'Display the tap 4 deets, including prices.'}

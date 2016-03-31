@@ -90,4 +90,9 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
     expect(replies.count).to eq(1)
     expect(replies.last).to include("Bailey's tap")
   end
+
+  it 'searches with a space' do
+    send_command 'taps zeus juice'
+    expect(replies.last).to eq("Bailey's tap 8) Fat Head’s Zeus Juice - Belgian Strong Blonde 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $9, 44% remaining")
+  end
 end
