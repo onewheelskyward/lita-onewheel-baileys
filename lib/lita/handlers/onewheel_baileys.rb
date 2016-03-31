@@ -51,6 +51,7 @@ module Lita
       end
 
       def taps_deets(response)
+        Lita.logger.debug "taps_deets started"
         beers = get_source
         beers.each do |tap, datum|
           query = response.matches[0][0].strip
@@ -146,6 +147,9 @@ module Lita
         # reply += "Served in a #{datum[1]['glass']} glass.  "
         reply += "#{get_display_prices datum[:prices]}, "
         reply += "#{datum[:remaining]}"
+
+        Lita.logger.info "send_response: Replying with #{reply}"
+
         response.reply reply
       end
 
@@ -162,8 +166,9 @@ module Lita
       end
 
       def get_source
+        Lita.logger.debug "get_source started"
         unless (response = redis.get('page_response'))
-          Lita.logger.info 'No cached result found.'
+          Lita.logger.info 'No cached result found, fetching.'
           response = RestClient.get('http://www.baileystaproom.com/draft-list/')
           redis.setex('page_response', 1800, response)
         end
@@ -175,6 +180,7 @@ module Lita
       # Future implementations could simply override this implementation-specific
       # code to help this grow more widely.
       def parse_response(response)
+        Lita.logger.debug "parse_response started."
         gimme_what_you_got = {}
         noko = Nokogiri.HTML response
         noko.css('div#boxfielddata').each do |beer_node|
@@ -191,6 +197,8 @@ module Lita
           abv = get_abv(beer_desc)
           full_text_search = "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.to_s.gsub /\d+\.*\d*%*/, ''}"
           prices = get_prices(beer_node)
+
+          Lita.logger.debug "Adding tap #{tap}"
 
           gimme_what_you_got[tap] = {
               type: tap_type,
