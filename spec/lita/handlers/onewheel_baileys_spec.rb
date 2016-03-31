@@ -45,7 +45,7 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
     expect(replies.last).to eq("Bailey's tap 22) GoodLife 29er - India Brown Ale 6.0%, 10oz - $3 | 20oz - $5 | 32oz Crowler - $8, 37% remaining")
   end
 
-  it 'searches for abv > 9%' do
+  it 'searches for abv >9%' do
     send_command 'taps >9%'
     expect(replies.count).to eq(5)
     expect(replies[0]).to eq("Bailey's tap 8) Fat Head’s Zeus Juice - Belgian Strong Blonde 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $9, 44% remaining")
@@ -55,14 +55,31 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
     expect(replies.last).to eq("Bailey's tap 24) Oakshire Perfect Storm - Imperial IPA 9.0%, 10oz - $4 | 20oz - $6 | 32oz Crowler - $10, 61% remaining")
   end
 
-  it 'searches for abv < 4%' do
+  it 'searches for abv > 9%' do
+    send_command 'taps > 9%'
+    expect(replies.count).to eq(5)
+    expect(replies[0]).to eq("Bailey's tap 8) Fat Head’s Zeus Juice - Belgian Strong Blonde 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $9, 44% remaining")
+    expect(replies[1]).to eq("Bailey's tap 9) Hopworks Noggin’ Floggin’ - Barleywine 11.0%, 4oz - $3 | 12oz - $6 | 32oz Crowler - $13, 34% remaining")
+    expect(replies[2]).to eq("Bailey's tap 18) Knee Deep Hop Surplus - Triple IPA 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 25% remaining")
+    expect(replies[3]).to eq("Bailey's tap 20) Knee Deep Dark Horse - Imperial Stout 12.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 39% remaining")
+    expect(replies.last).to eq("Bailey's tap 24) Oakshire Perfect Storm - Imperial IPA 9.0%, 10oz - $4 | 20oz - $6 | 32oz Crowler - $10, 61% remaining")
+  end
+
+  it 'searches for abv <4%' do
     send_command 'taps <4%'
     expect(replies.count).to eq(2)
     expect(replies[0]).to eq("Bailey's tap 3) (Cask) Machine House Crystal Maze - ESB 4.0%, 10oz - $3 | 20oz - $5, 57% remaining")
     expect(replies.last).to eq("Bailey's tap 11) Lagunitas Copper Fusion Ale - Copper Ale 4.0%, 10oz - $3 | 20oz - $5 | 32oz Crowler - $8, 19% remaining")
   end
 
-  it 'searches for prices > $6' do
+  it 'searches for abv < 4%' do
+    send_command 'taps < 4%'
+    expect(replies.count).to eq(2)
+    expect(replies[0]).to eq("Bailey's tap 3) (Cask) Machine House Crystal Maze - ESB 4.0%, 10oz - $3 | 20oz - $5, 57% remaining")
+    expect(replies.last).to eq("Bailey's tap 11) Lagunitas Copper Fusion Ale - Copper Ale 4.0%, 10oz - $3 | 20oz - $5 | 32oz Crowler - $8, 19% remaining")
+  end
+
+  it 'searches for prices >$6' do
     send_command 'taps >$6'
     expect(replies.count).to eq(4)
     expect(replies[0]).to eq("Bailey's tap 1) Cider Riot! Plastic Paddy - Apple Cider w/ Irish tea 6.0%, 10oz - $4 | 20oz - $7 | 32oz Crowler - $10, 48% remaining")
@@ -71,8 +88,25 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
     expect(replies[3]).to eq("Bailey's tap 24) Oakshire Perfect Storm - Imperial IPA 9.0%, 10oz - $4 | 20oz - $6 | 32oz Crowler - $10, 61% remaining")
   end
 
-  it 'searches for prices < $4' do
+  it 'searches for prices > $6' do
+    send_command 'taps > $6'
+    expect(replies.count).to eq(4)
+    expect(replies[0]).to eq("Bailey's tap 1) Cider Riot! Plastic Paddy - Apple Cider w/ Irish tea 6.0%, 10oz - $4 | 20oz - $7 | 32oz Crowler - $10, 48% remaining")
+    expect(replies[1]).to eq("Bailey's tap 4) Wild Ride Solidarity - Abbey Dubbel – Barrel Aged (Pinot Noir) 8.2%, 4oz - $4 | 12oz - $7, 26% remaining")
+    expect(replies[2]).to eq("Bailey's tap 9) Hopworks Noggin’ Floggin’ - Barleywine 11.0%, 4oz - $3 | 12oz - $6 | 32oz Crowler - $13, 34% remaining")
+    expect(replies[3]).to eq("Bailey's tap 24) Oakshire Perfect Storm - Imperial IPA 9.0%, 10oz - $4 | 20oz - $6 | 32oz Crowler - $10, 61% remaining")
+  end
+
+  it 'searches for prices <$4' do
     send_command 'taps <$4'
+    expect(replies.count).to eq(3)
+    expect(replies[0]).to eq("Bailey's tap 8) Fat Head’s Zeus Juice - Belgian Strong Blonde 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $9, 44% remaining")
+    expect(replies[1]).to eq("Bailey's tap 18) Knee Deep Hop Surplus - Triple IPA 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 25% remaining")
+    expect(replies[2]).to eq("Bailey's tap 20) Knee Deep Dark Horse - Imperial Stout 12.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 39% remaining")
+  end
+
+  it 'searches for prices < $4' do
+    send_command 'taps < $4'
     expect(replies.count).to eq(3)
     expect(replies[0]).to eq("Bailey's tap 8) Fat Head’s Zeus Juice - Belgian Strong Blonde 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $9, 44% remaining")
     expect(replies[1]).to eq("Bailey's tap 18) Knee Deep Hop Surplus - Triple IPA 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 25% remaining")
