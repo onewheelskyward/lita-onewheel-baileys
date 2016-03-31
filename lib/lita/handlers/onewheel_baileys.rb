@@ -30,6 +30,11 @@ module Lita
             command: true,
             help: {'taps roulette' => 'Can\'t decide?  Let me do it for you!'}
 
+      route /^tapslow$/i,
+            :taps_by_remaining,
+            command: true,
+            help: {'tapslow' => 'Show me the kegs at <10% remaining, or the lowest one available.'}
+
       def taps_list(response)
         beers = get_source
         reply = "Bailey's taps: "
@@ -118,6 +123,21 @@ module Lita
         send_response(beer[0], beer[1], response)
       end
 
+      def taps_by_remaining(response)
+        beers = get_source
+        response_sent = false
+        low_tap = nil
+        beers.each do |tap, datum|
+          if low_tap and beers[low_tap][:remaining] > datum[:remaining]
+            low_tap = tap
+          end
+          if datum[:remaining].to_i <= 10
+            send_response(tap, datum, response)
+            response_sent = true
+          end
+        end
+      end
+
       def send_response(tap, datum, response)
         reply = "Bailey's tap #{tap}) #{get_tap_type_text(datum[:type])}"
         reply += "#{datum[:brewery]} "
@@ -163,7 +183,7 @@ module Lita
           tap = tap_name.match(/\d+/).to_s
           tap_type = tap_name.match(/(cask|nitro)/i).to_s
 
-          remaining = beer_node.attributes['title']
+          remaining = beer_node.attributes['title'].to_s
 
           brewery = get_brewery(beer_node)
           beer_name = beer_node.css('span i').first.children.to_s

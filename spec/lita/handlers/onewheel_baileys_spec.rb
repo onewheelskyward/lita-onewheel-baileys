@@ -3,6 +3,17 @@ require 'spec_helper'
 describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
   it { is_expected.to route_command('taps') }
   it { is_expected.to route_command('taps 4') }
+  it { is_expected.to route_command('taps nitro') }
+  it { is_expected.to route_command('taps CASK') }
+  it { is_expected.to route_command('taps <$4') }
+  it { is_expected.to route_command('taps < $4') }
+  it { is_expected.to route_command('taps <=$4') }
+  it { is_expected.to route_command('taps <= $4') }
+  it { is_expected.to route_command('taps >4%') }
+  it { is_expected.to route_command('taps > 4%') }
+  it { is_expected.to route_command('taps >=4%') }
+  it { is_expected.to route_command('taps >= 4%') }
+  it { is_expected.to route_command('tapslow') }
 
   before do
     mock = File.open('spec/fixtures/baileys.html').read
@@ -148,5 +159,10 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
   it 'searches with a space' do
     send_command 'taps zeus juice'
     expect(replies.last).to eq("Bailey's tap 8) Fat Head’s Zeus Juice - Belgian Strong Blonde 10.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $9, 44% remaining")
+  end
+
+  it 'displays low taps' do
+    send_command 'tapslow'
+    expect(replies.last).to eq("Bailey's tap 25) Green Flash Passion Fruit Kicker - Wheat Ale w/ Passion Fruit 5.5%, 10oz - $3 | 20oz - $5, <= 1% remaining")
   end
 end
