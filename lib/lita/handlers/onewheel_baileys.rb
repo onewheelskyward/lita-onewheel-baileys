@@ -129,6 +129,9 @@ module Lita
         response_sent = false
         low_tap = nil
         beers.each do |tap, datum|
+          unless low_tap
+            low_tap = tap
+          end
           if low_tap and beers[low_tap][:remaining] > datum[:remaining]
             low_tap = tap
           end
