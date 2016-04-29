@@ -35,6 +35,16 @@ module Lita
             command: true,
             help: {'tapslow' => 'Show me the kegs at <10% remaining, or the lowest one available.'}
 
+      route /^tapsabvlow$/i,
+            :taps_low_abv,
+            command: true,
+            help: {'tapslow' => 'Show me the lowest abv keg.'}
+
+      route /^tapsabvhigh$/i,
+            :taps_high_abv,
+            command: true,
+            help: {'tapslow' => 'Show me the highest abv keg.'}
+
       def taps_list(response)
         beers = get_source
         reply = "Bailey's taps: "
@@ -140,6 +150,34 @@ module Lita
             response_sent = true
           end
         end
+      end
+
+      def taps_low_abv(response)
+        beers = get_source
+        low_tap = nil
+        beers.each do |tap, datum|
+          unless low_tap
+            low_tap = tap
+          end
+          if datum[:abv] != 0 and beers[low_tap][:abv] > datum[:abv]
+            low_tap = tap
+          end
+        end
+        send_response(low_tap, beers[low_tap], response)
+      end
+
+      def taps_high_abv(response)
+        beers = get_source
+        high_tap = nil
+        beers.each do |tap, datum|
+          unless high_tap
+            high_tap = tap
+          end
+          if datum[:abv] != 0 and beers[high_tap][:abv] < datum[:abv]
+            high_tap = tap
+          end
+        end
+        send_response(high_tap, beers[high_tap], response)
       end
 
       def send_response(tap, datum, response)

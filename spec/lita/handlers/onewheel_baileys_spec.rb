@@ -14,6 +14,8 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
   it { is_expected.to route_command('taps >=4%') }
   it { is_expected.to route_command('taps >= 4%') }
   it { is_expected.to route_command('tapslow') }
+  it { is_expected.to route_command('tapsabvhigh') }
+  it { is_expected.to route_command('tapsabvlow') }
 
   before do
     mock = File.open('spec/fixtures/baileys.html').read
@@ -172,5 +174,15 @@ describe Lita::Handlers::OnewheelBaileys, lita_handler: true do
   it 'displays low taps' do
     send_command 'tapslow'
     expect(replies.last).to eq("Bailey's tap 25) Green Flash Passion Fruit Kicker - Wheat Ale w/ Passion Fruit 5.5%, 10oz - $3 | 20oz - $5, <= 1% remaining")
+  end
+
+  it 'displays low abv' do
+    send_command 'tapsabvhigh'
+    expect(replies.last).to eq("Bailey's tap 20) Knee Deep Dark Horse - Imperial Stout 12.0%, 4oz - $2 | 12oz - $4 | 32oz Crowler - $10, 39% remaining")
+  end
+
+  it 'displays high abv' do
+    send_command 'tapsabvlow'
+    expect(replies.last).to eq("Bailey's tap 3) (Cask) Machine House Crystal Maze - ESB 4.0%, 10oz - $3 | 20oz - $5, 57% remaining")
   end
 end
