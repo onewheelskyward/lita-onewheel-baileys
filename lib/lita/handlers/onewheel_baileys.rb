@@ -101,8 +101,6 @@ module Lita
           full_text_search = "#{tap.sub /\d+/, ''} #{brewery} #{beer_name} #{beer_desc.to_s.gsub /\d+\.*\d*%*/, ''}"
           prices = get_prices(beer_node)
 
-          Lita.logger.debug "Adding tap #{tap}"
-
           gimme_what_you_got[tap] = {
               type: tap_type,
               remaining: remaining,

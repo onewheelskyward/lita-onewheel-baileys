@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-onewheel-baileys'
-  spec.version       = '3.8.2'
+  spec.version       = '3.8.3'
   spec.authors       = ['Andrew Kreps']
   spec.email         = ['andrew.kreps@gmail.com']
   spec.description   = %q{Lita interface to Bailey's Taproom listings.}
