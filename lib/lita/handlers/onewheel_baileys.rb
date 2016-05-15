@@ -46,6 +46,22 @@ module Lita
             command: true,
             help: {'tapslow' => 'Show me the highest abv keg.'}
 
+      def taps_list(response)
+        # wakka wakka
+        beers = self.get_source
+        reply = "Bailey's taps: "
+        beers.each do |tap, datum|
+          reply += "#{tap}) "
+          reply += get_tap_type_text(datum[:type])
+          reply += datum[:brewery].to_s + ' '
+          reply += (datum[:name].to_s.empty?)? '' : datum[:name].to_s + '  '
+        end
+        reply = reply.strip.sub /,\s*$/, ''
+
+        Lita.logger.info "Replying with #{reply}"
+        response.reply reply
+      end
+
       def send_response(tap, datum, response)
         reply = "Bailey's tap #{tap}) #{get_tap_type_text(datum[:type])}"
         reply += "#{datum[:brewery]} "
@@ -109,6 +125,7 @@ module Lita
               desc: beer_desc.to_s,
               abv: abv.to_f,
               prices: prices,
+              price: prices[1][:cost],
               search: full_text_search
           }
         end
