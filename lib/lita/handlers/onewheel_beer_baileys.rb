@@ -5,7 +5,7 @@ require 'lita-onewheel-beer-base'
 
 module Lita
   module Handlers
-    class OnewheelBaileys < OnewheelBeerBase
+    class OnewheelBeerBaileys < OnewheelBeerBase
       route /^taps$/i,
             :taps_list,
             command: true,
