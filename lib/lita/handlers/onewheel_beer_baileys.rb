@@ -39,12 +39,12 @@ module Lita
       route /^tapsabvlow$/i,
             :taps_low_abv,
             command: true,
-            help: {'tapslow' => 'Show me the lowest abv keg.'}
+            help: {'tapsabvlow' => 'Show me the lowest abv keg.'}
 
       route /^tapsabvhigh$/i,
             :taps_high_abv,
             command: true,
-            help: {'tapslow' => 'Show me the highest abv keg.'}
+            help: {'tapsabvhigh' => 'Show me the highest abv keg.'}
 
       def taps_list(response)
         # wakka wakka
