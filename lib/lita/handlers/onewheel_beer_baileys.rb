@@ -86,12 +86,13 @@ module Lita
 
       def get_source
         # https://visualizeapi.com/api/baileys
-        Lita.logger.debug "get_source started"
-        unless (response = redis.get('page_response'))
-          Lita.logger.info 'No cached result found, fetching.'
-          response = RestClient.get('http://www.baileystaproom.com/draft-list/')
-          redis.setex('page_response', 1800, response)
-        end
+        # Lita.logger.debug "get_source started"
+        # unless (response = redis.get('page_response'))
+        #   Lita.logger.info 'No cached result found, fetching.'
+        Lita.logger.info 'Getting http://www.baileystaproom.com/draft-list/'
+        response = RestClient.get('http://www.baileystaproom.com/draft-list/')
+          # redis.setex('page_response', 1800, response)
+        # end
         response.gsub! '<div id="responsecontainer"">', ''
         parse_response response
       end
